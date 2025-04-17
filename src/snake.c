@@ -9,10 +9,10 @@ void InitSnake(Snake* snake, Vector2 start_pos) {
     snake->head = (SnakeNode*)malloc(sizeof(SnakeNode));
     
     // Position initiale
-    snake->head->position = start_pos;
-    snake->head->next = NULL;
-    snake->head->prev = NULL;
-    snake->tail = snake->head;
+    snake->head->position = start_pos; // la position de la tête est celle de départ 
+    snake->head->next = NULL; // Il n'y a pas de nœud suivant pour le moment
+    snake->head->prev = NULL; // Il n'y a pas de nœud précédent pour le moment
+    snake->tail = snake->head; // La queue est la même que la tête au début
     
     // Ajouter un second segment
     GrowSnake(snake);
@@ -21,14 +21,11 @@ void InitSnake(Snake* snake, Vector2 start_pos) {
 }
 
 void ChangeSnakeDirection(Snake* snake, Vector2 new_dir) {
-    // Vérifier que la direction n'est pas opposée à la direction actuelle
-    // (Le serpent ne peut pas faire demi-tour instantanément)
-    if ((snake->direction.x == -new_dir.x && snake->direction.y == 0 && new_dir.y == 0) || (snake->direction.y == -new_dir.y && snake->direction.x == 0 && new_dir.x == 0)) return;  
-    // Direction opposée, on ignore
+    // Vérifier que la direction n'est pas opposée à la direction actuelle (Le serpent ne peut pas faire demi-tour instantanément)
+    if ((snake->direction.x == -new_dir.x && snake->direction.y == 0 && new_dir.y == 0) || (snake->direction.y == -new_dir.y && snake->direction.x == 0 && new_dir.x == 0)) return; //On ignore la di
     // Vérifier que la nouvelle direction n'est pas nulle
     if ((new_dir.x == 0 && new_dir.y == 0) || (new_dir.x != 0 && new_dir.y != 0)) return;  // Direction invalide (nulle ou diagonale)
-    // Appliquer la nouvelle direction
-    snake->direction = new_dir;
+    snake->direction = new_dir; // Mettre à jour la direction du serpent
 }
 
 void MoveSnake(Snake* snake) {
@@ -38,23 +35,20 @@ void MoveSnake(Snake* snake) {
     // Calculer la nouvelle position
     new_head->position.x = snake->head->position.x + snake->direction.x;
     new_head->position.y = snake->head->position.y + snake->direction.y;
-    new_head->next = snake->head;
-    new_head->prev = NULL;
-    // Mise à jour des liens
-    if (snake->head) snake->head->prev = new_head;
-    snake->head = new_head;
-    // Si un seul nœud existe, la queue du serpent est de même la tête 
-    if (snake->tail == NULL) snake->tail = snake->head;
+    new_head->next = snake->head; // Le nouveau nœud suivant est l'ancienne tête
+    new_head->prev = NULL; // Pas d'un nœud précédent pour le nouveau nœud
+    if (snake->head) snake->head->prev = new_head; // Mettre à jour l'ancienne tête pour qu'elle pointe vers le nouveau nœud
+    snake->head = new_head; // Mettre à jour la tête du serpent
+    if (snake->tail == NULL) snake->tail = snake->head; // Si un seul nœud existe, la queue du serpent est de même la tête 
     // Supprimer la queue si on ne grandit pas
     SnakeNode* current = snake->head;
-    int count = 1; // Compter les nœuds (le nombre total des segments pour le serpent)
+    int count = 1; // Compter le nombre total des segments pour le serpent
     // Compter les nœuds et trouver l'avant-dernier
     while (current->next != NULL) {
         current = current->next;
         count++;
     }
-    // Mettre à jour la longueur du serpent
-    snake->length = count;
+    snake->length = count; // Mettre à jour la longueur du serpent
     // Dans le cas d'avoir plus d'un noeud dans le serpent, on supprime la queue pour assurer que la queue ne reste pas dans la même position de départ
     if (count > 1) {
         current = snake->head;
