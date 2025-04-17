@@ -6,7 +6,6 @@
 #include <math.h>
 #include <stdio.h>
 
-    // Définition des textures
     Texture2D apple;
 
 
@@ -25,46 +24,38 @@
         
     }
 
-    void DrawCenteredText(const char* text, int y, int fontSize, Color color) {
+    void DrawCenteredText(const char* text, int y, int fontSize, Color color) { // Fonction pour dessiner du texte centré
         int width = MeasureText(text, fontSize);
         DrawText(text, GetScreenWidth()/2 - width/2, y, fontSize, color);
     }
 
     void DrawMainMenu(GameData* game) {
         Color bgColor = (Color){173, 204, 96, 255};
-        ClearBackground(bgColor);
-        
+        ClearBackground(bgColor);  
         int centerX = GetScreenWidth()/2;
         int centerY = GetScreenHeight()/2;
-        
-        // Titre
-        const char* title = "SNAKE GAME";
+        const char* title = "SNAKE GAME"; // Titre
         int titleSize = 60;
         Color titleColor = DARKBROWN;
         DrawCenteredText(title, centerY - 100, titleSize, titleColor);
-        //DrawText(title, centerX - MeasureText(title, titleSize)/2, centerY - 100, titleSize, titleColor);
-        // Bouton JOUER
-        Rectangle playBtn = {centerX - 100, centerY + 5, 200, 50};
+        Rectangle playBtn = {centerX - 100, centerY + 5, 200, 50}; // Bouton JOUER
         Color btnColor = COLOR_SNAKE;
         DrawRectangleRec(playBtn, btnColor);
         const char* playText = "PLAY";
         int btnTextSize = 30;
         DrawCenteredText(playText, centerY + 15, btnTextSize, WHITE);
-        //DrawText(playText, centerX - MeasureText(playText, btnTextSize)/2, centerY + 15, btnTextSize, WHITE);
-        // Vérifier le clic
         if (CheckCollisionPointRec(GetMousePosition(), playBtn) &&
-            IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) { // Vérifier le clic
             // Réinitialiser le jeu avant de passer à l'état PLAYING
             ResetGame(game);
             game->current_state = PLAYING;
         }
     }
     void DrawGameScreen(GameData* game) {
-        // Supprimer BeginDrawing()/EndDrawing() de cette fonction
         // Fond vert clair
         Color bgColor = COLOR_BACKGROUND;
         ClearBackground(bgColor);
-        // Quadrillage
+        // Faire le quadrillage
         Color gridColor = COLOR_GRID;
         for (int x = 0; x < GetScreenWidth(); x += CELL_SIZE) {
             for (int y = 0; y < GetScreenHeight(); y += CELL_SIZE) {
@@ -73,14 +64,14 @@
                 }
             }
         }
-        // Serpent
+        // Dessigner le Snake
         Color snakeColor = COLOR_SNAKE;
         SnakeNode* current = game->snake.head;
         bool is_head = true;
         while (current != NULL) {
             float x = current->position.x * CELL_SIZE;
             float y = current->position.y * CELL_SIZE;
-            // Dessiner le serpent segment par segment
+            // Dessiner le Snake segment par segment
             DrawRectangle(x, y, CELL_SIZE, CELL_SIZE, snakeColor);
             // Si c'est la tête, ajouter les yeux
             if (is_head) {
@@ -105,7 +96,7 @@
             }
             current = current->next;
         }
-        // Fruit
+        // Dessiner le fruit
         if (game->map.fruit.active) {
             Color fruitColor = COLOR_FRUIT;
             float x = game->map.fruit.position.x * CELL_SIZE + CELL_SIZE/2;
@@ -131,12 +122,7 @@
         }
         DrawText(muteText, GetScreenWidth() - MeasureText(muteText, fontSize) - 20, 10, fontSize, WHITE);
         // Zone cliquable pour le bouton mute
-        Rectangle muteBtn = {
-            GetScreenWidth() - MeasureText(muteText, fontSize) - 20,
-            10,
-            MeasureText(muteText, fontSize),
-            fontSize
-        };
+        Rectangle muteBtn = {GetScreenWidth() - MeasureText(muteText, fontSize) - 20, 10, MeasureText(muteText, fontSize), fontSize};
         
         // Vérifier le clic sur le bouton mute
         bool mute_clicked = CheckCollisionPointRec(GetMousePosition(), muteBtn) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
@@ -151,12 +137,10 @@
         }
     }
     void DrawGameOverScreen(GameData* game) {
-        // Fond noir
+        // Dessiner un fond noir
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), (Color){0, 0, 0, 255});
-        
         int centerX = GetScreenWidth()/2;
         int centerY = GetScreenHeight()/2;
-        
         // Game Over
         const char* gameOverText = "GAME OVER";
         int gameOverSize = 60;
